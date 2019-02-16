@@ -1,0 +1,19 @@
+{
+  "name": "magic_input",
+  "version": "1.0.0",
+  "description": "\"# magic webgl input\"",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --open --watch --port=9000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.101.1"
+  },
+  "devDependencies": {
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3"
+  }
+}
