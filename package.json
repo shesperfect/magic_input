@@ -4,7 +4,7 @@
   "description": "\"# magic webgl input\"",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open --watch --port=9000",
+    "start": "webpack-dev-server --open --watch --port=9999",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,6 +14,9 @@
   },
   "devDependencies": {
     "ts-loader": "^5.3.3",
-    "typescript": "^3.3.3"
+    "typescript": "^3.3.3",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.1"
   }
 }
