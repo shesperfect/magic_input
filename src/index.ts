@@ -1,26 +1,18 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight,
-  LineBasicMaterial, Geometry, Vector3, Line } from 'three';
+  LineBasicMaterial, Geometry, Vector3, Line, Color } from 'three';
 
 window.onload = () => {
   const scene = new Scene();
   const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
   camera.position.set( 0, 0, 100 );
 
-  const renderer = new WebGLRenderer();
+  const renderer = new WebGLRenderer({
+    alpha: true,
+  });
+  renderer.setClearColor(0x1e1f21);
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  document.body.appendChild(renderer.domElement);
-
-  const material = new LineBasicMaterial( { color: 0x0000ff } );
-
-  const geometry = new Geometry();
-  geometry.vertices.push(new Vector3( -10, 0, 0) );
-  geometry.vertices.push(new Vector3( 0, 10, 0) );
-  geometry.vertices.push(new Vector3( 10, 0, 0) );
-
-  const line = new Line( geometry, material );
-
-  scene.add(line);
+  document.getElementById('waterScene').appendChild(renderer.domElement);
 
   animate();
 
@@ -29,5 +21,4 @@ window.onload = () => {
 
     renderer.render(scene, camera);
   }
-
 };
