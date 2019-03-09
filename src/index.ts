@@ -1,10 +1,12 @@
 import { Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight,
   LineBasicMaterial, Geometry, Vector3, Line, Color, PlaneGeometry, MeshBasicMaterial, Mesh } from 'three';
-import GUI from 'libs/dat.gui.min';
-
-console.log(GUI);
+import * as dat from 'dat.gui';
 
 window.onload = () => {
+  // variables
+  let plane;
+  let controls;
+
   const scene = new Scene();
   const camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
   camera.position.set( 0, 0, 100 );
@@ -17,25 +19,33 @@ window.onload = () => {
 
   document.getElementById('waterScene').appendChild(renderer.domElement);
 
-  const controls = function() {
-    this.sceneX = 0;
-    this.sceneY = 0;
-    this.sceneZ = 0;
-  };
-
-  const gui = new dat.GUI();
-  gui.add(controls, 'sceneX', -100, 100);
-  gui.add(controls, 'sceneY', -100, 100);
-  gui.add(controls, 'sceneZ', -100, 100);
-
   initWater();
+  initControls();
   animate();
+
+  function initControls() {
+    controls = {
+      sceneX: 0,
+      sceneY: 0,
+      sceneZ: 0,
+      cameraX: 0,
+      cameraY: 0,
+      cameraZ: 0,
+    };
+
+    const gui = new dat.GUI();
+    gui.add(controls, 'sceneX', -100, 100).onChange(() => plane.position.x = controls.sceneX);
+    gui.add(controls, 'sceneY', -100, 100).onChange(() => plane.position.y = controls.sceneY);
+    gui.add(controls, 'sceneZ', -100, 100).onChange(() => plane.position.z = controls.sceneZ);
+    gui.add(controls, 'cameraX', -100, 100).onChange(() => camera.position.x = controls.cameraX);
+    gui.add(controls, 'cameraY', -100, 100).onChange(() => camera.position.y = controls.cameraY);
+    gui.add(controls, 'cameraZ', -100, 100).onChange(() => camera.position.z = controls.cameraZ);
+  }
 
   function initWater() {
     const geometry = new PlaneGeometry(100, 100, 50, 50);
-    const material = new MeshBasicMaterial({ color: 0x7a6163, wireframe: true });
-    const plane = new Mesh(geometry, material);
-    plane.position.set(controls.sceneX, controls.sceneY, controls.sceneZ);
+    const material = new MeshBasicMaterial({ color: 0x7a6163, wireframe: false });
+    plane = new Mesh(geometry, material);
     scene.add(plane);
   }
   function animate() {
