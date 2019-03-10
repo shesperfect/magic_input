@@ -1,15 +1,20 @@
 import {
   Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight,
   LineBasicMaterial, Geometry, Vector3, Line, Color, PlaneBufferGeometry,
-  MeshPhongMaterial, Mesh,
+  MeshPhongMaterial, Mesh, Vector2, Raycaster, MeshBasicMaterial,
 } from 'three';
 import * as dat from 'dat.gui';
 import * as OrbitControls from 'three-orbitcontrols';
 
 window.onload = () => {
   let scene, renderer, camera;
-  let waterMesh;
+  let waterMesh, meshRay;
   let controls, orbitControls;
+
+  let mouseMoved = false;
+
+  const mouseCoords = new Vector2();
+  const raycaster = new Raycaster();
 
   init();
   animate();
@@ -27,19 +32,28 @@ window.onload = () => {
 
     document.getElementById('waterScene').appendChild(renderer.domElement);
 
+    // event listeners
+    window.addEventListener('resize', onWindowResize);
+
     initWater();
     initControls();
   }
 
   function initWater() {
     const geometry = new PlaneBufferGeometry(100, 100, 50, 50);
-    const material = new MeshPhongMaterial({ color: 0x7a6163, wireframe: false });
+    const material = new MeshPhongMaterial({ color: 0x7a6163 });
     waterMesh = new Mesh(geometry, material);
-    waterMesh.rotation.x = -1.1;
+    waterMesh.rotation.x = -0.6;
     scene.add(waterMesh);
+
+    meshRay = new Mesh(new PlaneBufferGeometry(100, 100, 1, 1), new MeshBasicMaterial({ color: 0xffffff, visible: true }));
+    meshRay.rotation.x = -0.6;
+    scene.add(meshRay);
 
     const sun = new DirectionalLight();
     scene.add(sun);
+
+    document.addEventListener('mousemove', onMouseMove);
   }
 
   function initControls() {
@@ -64,6 +78,32 @@ window.onload = () => {
   function animate() {
     requestAnimationFrame(animate);
 
+    render();
+  }
+
+  function render() {
+    if (mouseMoved) {
+      const intersects = raycaster.intersectObject(meshRay);
+      mouseMoved = false;
+
+      intersects.length && console.log('intersects', intersects);
+    }
+
     renderer.render(scene, camera);
+  }
+
+  function onMouseMove(event) {
+    mouseCoords.set(
+      event.clientX / renderer.domElement.clientWidth * 2 - 1,
+      -event.clientY / renderer.domElement.clientHeight * 2 + 1
+    );
+    mouseMoved = true;
+  }
+
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
   }
 };
