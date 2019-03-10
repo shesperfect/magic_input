@@ -1,11 +1,15 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight,
-  LineBasicMaterial, Geometry, Vector3, Line, Color, PlaneGeometry, MeshBasicMaterial, Mesh } from 'three';
+import {
+  Scene, PerspectiveCamera, WebGLRenderer, DirectionalLight,
+  LineBasicMaterial, Geometry, Vector3, Line, Color, PlaneBufferGeometry,
+  MeshPhongMaterial, Mesh,
+} from 'three';
 import * as dat from 'dat.gui';
+import * as OrbitControls from 'three-orbitcontrols';
 
 window.onload = () => {
   let scene, renderer, camera;
   let waterMesh;
-  let controls;
+  let controls, orbitControls;
 
   init();
   animate();
@@ -13,7 +17,7 @@ window.onload = () => {
   function init() {
     scene = new Scene();
     camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set( 0, 0, 100 );
+    camera.position.set(0, 0, 100);
 
     renderer = new WebGLRenderer({
       alpha: true,
@@ -26,29 +30,35 @@ window.onload = () => {
     initWater();
     initControls();
   }
+
   function initWater() {
-    const geometry = new PlaneGeometry(100, 100, 50, 50);
-    const material = new MeshBasicMaterial({ color: 0x7a6163, wireframe: false });
+    const geometry = new PlaneBufferGeometry(100, 100, 50, 50);
+    const material = new MeshPhongMaterial({ color: 0x7a6163, wireframe: false });
     waterMesh = new Mesh(geometry, material);
+    waterMesh.rotation.x = -1.1;
     scene.add(waterMesh);
+
+    const sun = new DirectionalLight();
+    scene.add(sun);
   }
+
   function initControls() {
     controls = {
-      sceneX: 0,
-      sceneY: 0,
-      sceneZ: 0,
-      cameraX: 0,
-      cameraY: 0,
-      cameraZ: 0,
+      waterRotationX: 0,
+      waterRotationY: 0,
+      waterRotationZ: 0,
+      enableWireFrame: false,
     };
 
     const gui = new dat.GUI();
-    gui.add(controls, 'sceneX', -100, 100).onChange(() => waterMesh.position.x = controls.sceneX);
-    gui.add(controls, 'sceneY', -100, 100).onChange(() => waterMesh.position.y = controls.sceneY);
-    gui.add(controls, 'sceneZ', -100, 100).onChange(() => waterMesh.position.z = controls.sceneZ);
-    gui.add(controls, 'cameraX', -100, 100).onChange(() => camera.position.x = controls.cameraX);
-    gui.add(controls, 'cameraY', -100, 100).onChange(() => camera.position.y = controls.cameraY);
-    gui.add(controls, 'cameraZ', -100, 100).onChange(() => camera.position.z = controls.cameraZ);
+    gui.add(controls, 'waterRotationX', -2, 1, 0.01).onChange(() => waterMesh.rotation.x = controls.waterRotationX);
+    gui.add(controls, 'waterRotationY', -1, 1, 0.01).onChange(() => waterMesh.rotation.y = controls.waterRotationY);
+    gui.add(controls, 'waterRotationZ', -1, 1, 0.01).onChange(() => waterMesh.rotation.z = controls.waterRotationZ);
+    gui.add(controls, 'enableWireFrame').onChange(() => waterMesh.material.wireframe = controls.enableWireFrame);
+
+    // orbit controls
+    orbitControls = new OrbitControls(camera, renderer.domElement);
+
   }
 
   function animate() {
